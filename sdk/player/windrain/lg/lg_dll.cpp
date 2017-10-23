@@ -53,7 +53,7 @@ CLogic::~CLogic()
 bool CLogic::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* pUserContext )
 {
 	if ( gpui && gpui->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
-	//if ( gpvr && gpvr->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
+	if ( gpvr && gpvr->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
 
 	return false;
 }
@@ -61,7 +61,7 @@ bool CLogic::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* 
 bool CLogic::Render()
 {
 	if (gpui) gpui->Render(); // dxui component
-	//if (gpvr) gpvr->Render(); // vr component
+	if (gpvr) gpvr->Render(); // vr component
 
 
 	return true;
@@ -70,6 +70,7 @@ bool CLogic::Render()
 bool CLogic::FrameMove(float fTimeD)
 {
 	if (gphy) gphy->StepSimulation(fTimeD);
+	if (gpvr) gpvr->FrameMove(fTimeD); // vr component
 
 	return true;
 }

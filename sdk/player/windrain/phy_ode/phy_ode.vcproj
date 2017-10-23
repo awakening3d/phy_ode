@@ -233,6 +233,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\sc_capsule.cpp">
+			</File>
+			<File
 				RelativePath="sc_cylinder.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -251,6 +254,15 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;PHY_ODE_EXPORTS;$(NoInherit)"
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\sc_geom.cpp">
+			</File>
+			<File
+				RelativePath=".\sc_heightfield.cpp">
+			</File>
+			<File
+				RelativePath=".\sc_panel.cpp">
 			</File>
 			<File
 				RelativePath="sc_space.cpp">
@@ -291,6 +303,9 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;PHY_ODE_EXPORTS;$(NoInherit)"
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\sc_world.cpp">
 			</File>
 		</Filter>
 		<Filter

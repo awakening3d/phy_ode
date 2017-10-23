@@ -71,11 +71,17 @@ bool CPhy::OneTimeInit(IApp* pApp)		// will be called when load component
 	dWorldSetStepThreadingImplementation(g_ode_world, dThreadingImplementationGetFunctions(threading), threading);
 
 	
+	openlib_ode_world(pApp->GetLuaVM());
 	openlib_ode_space(pApp->GetLuaVM());
 	openlib_ode_sphere(pApp->GetLuaVM());
 	openlib_ode_box(pApp->GetLuaVM());
 	openlib_ode_cylinder(pApp->GetLuaVM());
+	openlib_ode_capsule(pApp->GetLuaVM());
+	openlib_ode_panel(pApp->GetLuaVM());
+	openlib_ode_heightfield(pApp->GetLuaVM());
+
 	lua_register(pApp->GetLuaVM(), "ode_CreateSpace", l_create_space);
+	lua_register(pApp->GetLuaVM(), "ode_GetWorldID", l_get_worldid);
 
 	return bret;
 }

@@ -47,6 +47,7 @@ int openlib_ode_box(lua_State *L)
 
 	luaL_register(L, NULL, boxlib_m);
 	lua_register(L, "_new_ode_box_ud", new_box);
+	lua_settop(L, 0);
 	return 1;
 }
 

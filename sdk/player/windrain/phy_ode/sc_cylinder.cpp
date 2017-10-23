@@ -47,6 +47,7 @@ int openlib_ode_cylinder(lua_State *L)
 
 	luaL_register(L, NULL, cylinderlib_m);
 	lua_register(L, "_new_ode_cylinder_ud", new_cylinder);
+	lua_settop(L, 0);
 	return 1;
 }
 

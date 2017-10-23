@@ -47,6 +47,7 @@ int openlib_ode_sphere(lua_State *L)
 
 	luaL_register(L, NULL, spherelib_m);
 	lua_register(L, "_new_ode_sphere_ud", new_sphere);
+	lua_settop(L, 0);
 	return 1;
 }
 

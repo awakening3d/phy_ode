@@ -7,6 +7,17 @@
 	luaL_argcheck(L, (NULL!=pud)&&(UD_NONE!=pud->dwClass), 1, " 'body' expected");	\
 	dBodyID pBody = *(dBodyID*)(&pud[1]);	\
 
+#define CHECK_XYZ(scale) \
+	float x = luaL_checknumber(L, 2) * scale; \
+	float y = luaL_checknumber(L, 3) * scale; \
+	float z = luaL_checknumber(L, 4) * scale; \
+
+
+#define PUSH_POS(scale) \
+	lua_pushnumber(L, p[0] * scale); \
+	lua_pushnumber(L, p[1] * scale); \
+	lua_pushnumber(L, p[2] * scale); \
+
 
 //get enable
 int l_get_enable(lua_State *L)
@@ -46,9 +57,7 @@ int l_get_position(lua_State* L)
 {
 	CHECK_PBODY //参数1是Body (userdata)
 	const dReal* p = dBodyGetPosition(pBody);
-	lua_pushnumber(L, p[0] * UNIT_SCALE);
-	lua_pushnumber(L, p[1] * UNIT_SCALE);
-	lua_pushnumber(L, p[2] * UNIT_SCALE);
+	PUSH_POS(UNIT_SCALE)
 	return 3;
 }
 
@@ -56,10 +65,9 @@ int l_get_position(lua_State* L)
 int l_set_position(lua_State* L)
 {
 	CHECK_PBODY //参数1是Body (userdata)
-	float x = luaL_checknumber(L, 2) * UNIT_SCALE_INV;
-	float y = luaL_checknumber(L, 3) * UNIT_SCALE_INV;
-	float z = luaL_checknumber(L, 4) * UNIT_SCALE_INV;
+	CHECK_XYZ(UNIT_SCALE_INV)
 	dBodySetPosition(pBody, x, y, z);
+	dBodyEnable(pBody);
 	return 0;
 }
 
@@ -85,8 +93,48 @@ int l_set_quaternion(lua_State* L)
 	q[3] = luaL_checknumber(L, 4);
 	q[0] = luaL_checknumber(L, 5);
 	dBodySetQuaternion(pBody, q);
+	dBodyEnable(pBody);
 	return 0;
 }
+
+//get linear velocity
+int l_get_linear_vel(lua_State* L)
+{
+	CHECK_PBODY //参数1是Body (userdata)
+	const dReal* p = dBodyGetLinearVel(pBody);
+	PUSH_POS(UNIT_SCALE)
+	return 3;
+}
+
+//set linear velocity   
+int l_set_linear_vel(lua_State* L)
+{
+	CHECK_PBODY //参数1是Body (userdata)
+	CHECK_XYZ(UNIT_SCALE_INV)
+	dBodySetLinearVel(pBody, x, y, z);
+	dBodyEnable(pBody);
+	return 0;
+}
+
+//get angular velocity
+int l_get_angular_vel(lua_State* L)
+{
+	CHECK_PBODY //参数1是Body (userdata)
+	const dReal* p = dBodyGetAngularVel(pBody);
+	PUSH_POS(1)
+	return 3;
+}
+
+//set angular velocity   
+int l_set_angular_vel(lua_State* L)
+{
+	CHECK_PBODY //参数1是Body (userdata)
+	CHECK_XYZ(1)
+	dBodySetAngularVel(pBody, x, y, z);
+	dBodyEnable(pBody);
+	return 0;
+}
+
 
 //get matrix
 int l_get_matrix(lua_State* L)
