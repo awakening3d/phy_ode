@@ -5,6 +5,9 @@
 extern "C" DLL_EXPORT DWORD VersionOfSDK() { return WINDS3D_SDK_VERSION; }
 
 
+dmCList<GeneralModule> gGeneralModuleList;
+
+
 IW3D_UI* gpui=NULL;
 static char g_szUIModule[MAX_PATH] = "dxui.dll";
 
@@ -34,7 +37,55 @@ bool AppInit( IApp* pApp )
 void AppCleanup()
 {
 	for ( int i=0; i<PACKAGE_NUM; i++) unload_package(i);
+
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) {
+		const GeneralModule& gm = gGeneralModuleList.GetNext(pos);
+		gpApp->ReleaseComponent( gm.pComponent );
+		gpApp->UnloadComponentPackage( gm.szModuleFileName );
+	}
+	gGeneralModuleList.RemoveAll();
 }
+
+
+bool load_general_package( const char* szModuleFileName, const char* szComponentName )
+{
+	if ( !gpApp->LoadComponentPackage( szModuleFileName ) ) return false;
+	GeneralModule gm;
+	ZeroMemory(&gm, sizeof(gm));
+
+	gm.pComponent = (IW3D_GENERAL*)gpApp->CreateComponent( szComponentName );
+	if (!gm.pComponent) {
+		gpApp->OutputToConsole("Create Component Failed! : %s", szComponentName);
+		gpApp->UnloadComponentPackage( szModuleFileName );
+		return false;
+	}
+
+	strcpy( gm.szModuleFileName, szModuleFileName );
+	strcpy( gm.szComponentName, szComponentName );
+
+	gGeneralModuleList.AddTail( gm );
+
+	return true;
+
+}
+
+void unload_general_package( const char* szModuleFileName )
+{
+
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) {
+		dmPOSITION savepos=pos;
+		const GeneralModule& gm = gGeneralModuleList.GetNext(pos);
+		
+		if ( 0 != strcmp(szModuleFileName, gm.szModuleFileName) ) continue;
+		gpApp->ReleaseComponent( gm.pComponent );
+		gpApp->UnloadComponentPackage( gm.szModuleFileName );
+		gGeneralModuleList.RemoveAt(savepos);
+	}
+
+}
+
 
 void load_package(int p)
 {

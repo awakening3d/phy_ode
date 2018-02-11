@@ -56,7 +56,7 @@ static int l_destroy_object(lua_State *L)
 	dGeomID pGeom = NULL;
 	dBodyID pBody = NULL;
 	switch (pud->dwClass) {
-	case UD_PANEL:
+	case UD_GEOM:
 		pGeom = *(dGeomID*)(&pud[1]);
 		break;
 	case UD_HEIGHTFIELD:
@@ -86,8 +86,8 @@ static int l_destroy_object(lua_State *L)
 	return 0;
 }
 
-// create panel
-static int l_create_panel(lua_State* L)
+// create plane
+static int l_create_plane(lua_State* L)
 {
 	CHECK_SCSPACE(1) //参数1是sc_space (userdata)
 
@@ -138,6 +138,22 @@ static int l_create_heightfield(lua_State* L)
 	lua_pushlightuserdata( L, heightid );
 	return 2;
 }
+
+
+// create box
+static int l_create_box(lua_State* L)
+{
+	CHECK_SCSPACE(1) //参数1是sc_space (userdata)
+
+	float lx = luaL_checknumber(L, 2) * UNIT_SCALE_INV; // the length of the box along the X axis
+	float ly = luaL_checknumber(L, 3) * UNIT_SCALE_INV;
+	float lz = luaL_checknumber(L, 4) * UNIT_SCALE_INV;
+
+	dGeomID geom = dCreateBox(pscspace->pspace, lx, ly, lz); // create a geom
+	lua_pushlightuserdata(L, geom);
+	return 1;
+}
+
 
 
 // add sphere
@@ -223,8 +239,9 @@ static int l_add_capsule(lua_State* L)
 
 static const struct luaL_reg spacelib_m[] = {
 	UDHEAD_METHODS
-{ "create_panel",		l_create_panel },
+{ "create_plane",		l_create_plane },
 { "create_heightfield",	l_create_heightfield },
+{ "create_box",			l_create_box },
 { "add_sphere",			l_add_sphere },
 { "add_box",			l_add_box },
 { "add_cylinder",		l_add_cylinder },

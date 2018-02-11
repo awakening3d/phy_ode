@@ -10,7 +10,9 @@ SINGLETON_COMPONENT( CLogic )
 	IApp* pApp;
 public:
 	virtual bool MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* pUserContext=NULL );
-	virtual bool Render();
+	virtual bool Render( int nType=0 );
+	virtual bool Render2D( int nType=0 );
+	virtual bool VRRender( int nType=0 );
 	virtual bool FrameMove(float fTimeD);
 
 	virtual ~CLogic();
@@ -55,22 +57,47 @@ bool CLogic::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* 
 	if ( gpui && gpui->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
 	if ( gpvr && gpvr->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
 
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) if ( gGeneralModuleList.GetNext(pos).pComponent->MsgProc( hWnd, uMsg, wParam, lParam ) ) return true;
+
 	return false;
 }
 
-bool CLogic::Render()
-{
-	if (gpui) gpui->Render(); // dxui component
-	if (gpvr) gpvr->Render(); // vr component
 
+bool CLogic::Render( int nType )
+{
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) gGeneralModuleList.GetNext(pos).pComponent->Render(nType);
 
 	return true;
 }
+
+bool CLogic::Render2D( int nType )
+{
+	if (gpui) gpui->Render(); // dxui component
+
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) gGeneralModuleList.GetNext(pos).pComponent->Render2D(nType);
+
+	return true;
+}
+
+bool CLogic::VRRender( int nType )
+{
+	if (!gpvr) return false;
+
+	return gpvr->Render(); // vr component
+}
+
 
 bool CLogic::FrameMove(float fTimeD)
 {
 	if (gphy) gphy->StepSimulation(fTimeD);
 	if (gpvr) gpvr->FrameMove(fTimeD); // vr component
+
+	dmPOSITION pos = gGeneralModuleList.GetHeadPosition();
+	while (pos) gGeneralModuleList.GetNext(pos).pComponent->FrameMove(fTimeD);
+
 
 	return true;
 }

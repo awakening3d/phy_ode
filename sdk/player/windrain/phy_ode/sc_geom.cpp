@@ -1,6 +1,7 @@
 //sc_geom.cpp
 
 #include "ode_script.h"
+#include "sc_geom.h"
 
 #define CHECK_PGEOM	\
 	SCUD_HEAD* pud=(SCUD_HEAD*)lua_touserdata(L,1);	\
@@ -17,6 +18,40 @@
 	lua_pushnumber(L, p[0] * scale); \
 	lua_pushnumber(L, p[1] * scale); \
 	lua_pushnumber(L, p[2] * scale); \
+
+
+
+
+
+//ode geom
+typedef struct : public SCUD_HEAD {
+	dGeomID gmgeom;
+} sc_geom;
+
+#define CHECK_SCGEOM \
+	sc_geom* pscgeom = (sc_geom *)lua_touserdata(L,1); \
+	luaL_argcheck(L, (NULL!=pscgeom) && (UD_GEOM==pscgeom->dwClass), 1, " 'geom' expected"); \
+
+#define GEOM_METATABLE "ode_geom_metatable"
+
+//new geom
+static int new_geom(lua_State *L)
+{
+	dGeomID gmgeom = (dGeomID)lua_touserdata(L, 1); //²ÎÊý1ÊÇdGeomID (lightuserdata)
+	luaL_argcheck(L, NULL != gmgeom, 1, " 'geom' expected");
+
+	size_t nbytes = sizeof(sc_geom);
+	sc_geom *pscgeom = (sc_geom *)lua_newuserdata(L, nbytes);
+	ZeroMemory(pscgeom, sizeof(sc_geom));
+	pscgeom->dwClass = UD_GEOM;
+	pscgeom->gmgeom = gmgeom;
+
+	luaL_getmetatable(L, GEOM_METATABLE);
+	lua_setmetatable(L, -2);
+	return 1;  /* new userdatum is already on the stack */
+}
+
+
 
 
 //get enable
@@ -118,3 +153,29 @@ int l_geo_get_matrix(lua_State* L)
 	lua_pushlightuserdata(L, m);
 	return 1;
 }
+
+
+
+
+
+
+static const struct luaL_reg geomlib_m[] = {
+	UDHEAD_METHODS
+	GEOM_METHODS
+	{ NULL, NULL }
+};
+
+int openlib_ode_geom(lua_State *L)
+{
+	luaL_newmetatable(L, GEOM_METATABLE);
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_register(L, NULL, geomlib_m);
+	lua_register(L, "_new_ode_geom_ud", new_geom);
+	lua_settop(L, 0);
+	return 1;
+}
+

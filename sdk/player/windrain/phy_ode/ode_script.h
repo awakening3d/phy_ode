@@ -6,14 +6,14 @@
 #include <windows.h>
 #include "..\..\..\lua\include\lua.hpp"
 #include "ode\ode.h"
-#include "dmclist.h"
+#include "..\..\common\dmclist.h"
 
 #define UD_NONE			0x00000000L //none, invalid userdata
 
 #define UD_WORLD		0x10000001L // world
 #define UD_SPACE		0x10000002L // space
 
-#define UD_PANEL		0x20000001L // panel
+#define UD_GEOM			0x20000001L // geom
 #define UD_HEIGHTFIELD	0x20000002L // heightfield
 
 #define UD_SPHERE		0x30000001L	// sphere
@@ -46,7 +46,7 @@ int openlib_ode_sphere(lua_State *L);
 int openlib_ode_box(lua_State *L);
 int openlib_ode_cylinder(lua_State *L);
 int openlib_ode_capsule(lua_State *L);
-int openlib_ode_panel(lua_State *L);
+int openlib_ode_geom(lua_State *L);
 int openlib_ode_heightfield(lua_State *L);
 
 
