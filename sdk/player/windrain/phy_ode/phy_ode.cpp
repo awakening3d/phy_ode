@@ -77,7 +77,7 @@ bool CPhy::OneTimeInit(IApp* pApp)		// will be called when load component
 	openlib_ode_box(pApp->GetLuaVM());
 	openlib_ode_cylinder(pApp->GetLuaVM());
 	openlib_ode_capsule(pApp->GetLuaVM());
-	openlib_ode_panel(pApp->GetLuaVM());
+	openlib_ode_geom(pApp->GetLuaVM());
 	openlib_ode_heightfield(pApp->GetLuaVM());
 
 	lua_register(pApp->GetLuaVM(), "ode_CreateSpace", l_create_space);

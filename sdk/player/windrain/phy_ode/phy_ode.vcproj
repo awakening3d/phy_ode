@@ -262,9 +262,6 @@
 				RelativePath=".\sc_heightfield.cpp">
 			</File>
 			<File
-				RelativePath=".\sc_panel.cpp">
-			</File>
-			<File
 				RelativePath="sc_space.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
